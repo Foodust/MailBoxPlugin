@@ -1,0 +1,19 @@
+name: MailBoxPlugin
+version: '1.0-SNAPSHOT'
+main: org.foodust.mailBoxPlugin.MailBoxPlugin
+api-version: '1.21'
+authors: [ Foodust ]
+description: 플레이어간 아이템을 전송할 수 있는 우체통 플러그인
+commands:
+  우체통:
+    description: 우체통 명령어
+    aliases: [mailbox, mb]
+    usage: /<command> [열기|리로드]
+
+permissions:
+  mailbox.admin:
+    description: 우체통 관리자 권한
+    default: op
+  mailbox.use:
+    description: 우체통 사용 권한
+    default: true

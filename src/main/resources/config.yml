@@ -1,0 +1,9 @@
+inventory:
+  title: ""
+  size: 54
+  next:
+    material: "PAPER"
+    data: 11
+  prev:
+    material: "PAPER"
+    data: 12
