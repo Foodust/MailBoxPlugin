@@ -27,10 +27,10 @@ public final class MailBoxPlugin extends JavaPlugin {
         this.commandModule = new CommandModule(this);
 
         CommandManager commandManager = new CommandManager(this);
-
-        MailBoxAPI.init(this);
         
         this.mailBoxManager = new MailBoxManager(this);
+        
+        MailBoxAPI.init(this);
         
         this.mailBoxGUIListener = new MailBoxGUIListener(this);
 

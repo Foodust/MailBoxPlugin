@@ -15,7 +15,7 @@ public class MailBoxAPI {
 
     private MailBoxAPI(MailBoxPlugin plugin) {
         this.plugin = plugin;
-        this.mailBoxManager = new MailBoxManager(plugin);
+        this.mailBoxManager = plugin.getMailBoxManager();
     }
 
     public static void init(MailBoxPlugin plugin) {
