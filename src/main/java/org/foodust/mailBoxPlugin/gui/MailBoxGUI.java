@@ -22,6 +22,8 @@ public class MailBoxGUI implements InventoryHolder {
     private final PlayerMailBox mailBox;
     private final Inventory inventory;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private int currentPage = 0;
+    private static final int ITEMS_PER_PAGE = 45;
 
     public MailBoxGUI(MailBoxPlugin plugin, Player player, PlayerMailBox mailBox) {
         this.plugin = plugin;
@@ -35,7 +37,10 @@ public class MailBoxGUI implements InventoryHolder {
         inventory.clear();
         
         List<Mail> mails = mailBox.getMails();
-        for (int i = 0; i < Math.min(mails.size(), 45); i++) {
+        int startIndex = currentPage * ITEMS_PER_PAGE;
+        int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, mails.size());
+        
+        for (int i = startIndex; i < endIndex; i++) {
             Mail mail = mails.get(i);
             ItemStack displayItem = mail.item().clone();
             ItemMeta meta = displayItem.getItemMeta();
@@ -51,7 +56,7 @@ public class MailBoxGUI implements InventoryHolder {
                 displayItem.setItemMeta(meta);
             }
             
-            inventory.setItem(i, displayItem);
+            inventory.setItem(i - startIndex, displayItem);
         }
         
         ItemStack glassPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
@@ -65,18 +70,29 @@ public class MailBoxGUI implements InventoryHolder {
             inventory.setItem(i, glassPane);
         }
         
+        if (currentPage > 0) {
+            ItemStack prevItem = createNavigationItem("prev", "§e이전 페이지");
+            inventory.setItem(48, prevItem);
+        }
+        
         ItemStack infoBook = new ItemStack(Material.BOOK);
         ItemMeta bookMeta = infoBook.getItemMeta();
         if (bookMeta != null) {
             bookMeta.setDisplayName("§6우체통 정보");
             List<String> bookLore = new ArrayList<>();
             bookLore.add("§7우편 개수: §f" + mails.size() + " / " + plugin.getConfig().getInt("max-mail-size", 54));
+            bookLore.add("§7페이지: §f" + (currentPage + 1) + " / " + (getTotalPages()));
             bookLore.add("");
             bookLore.add("§e아이템을 클릭하여 수령하세요.");
             bookMeta.setLore(bookLore);
             infoBook.setItemMeta(bookMeta);
         }
         inventory.setItem(49, infoBook);
+        
+        if (currentPage < getTotalPages() - 1) {
+            ItemStack nextItem = createNavigationItem("next", "§e다음 페이지");
+            inventory.setItem(50, nextItem);
+        }
     }
 
     public void open() {
@@ -94,5 +110,57 @@ public class MailBoxGUI implements InventoryHolder {
 
     public void refresh() {
         updateInventory();
+    }
+    
+    private ItemStack createNavigationItem(String type, String displayName) {
+        String materialName = plugin.getConfig().getString("inventory." + type + ".material", "PAPER");
+        int customModelData = plugin.getConfig().getInt("inventory." + type + ".data", 0);
+        
+        Material material = Material.getMaterial(materialName);
+        if (material == null) {
+            material = Material.PAPER;
+        }
+        
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(displayName);
+            if (customModelData > 0) {
+                meta.setCustomModelData(customModelData);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+    
+    public void nextPage() {
+        if (currentPage < getTotalPages() - 1) {
+            currentPage++;
+            updateInventory();
+        }
+    }
+    
+    public void previousPage() {
+        if (currentPage > 0) {
+            currentPage--;
+            updateInventory();
+        }
+    }
+    
+    private int getTotalPages() {
+        return Math.max(1, (int) Math.ceil(mailBox.getMails().size() / (double) ITEMS_PER_PAGE));
+    }
+    
+    public int getCurrentPage() {
+        return currentPage;
+    }
+    
+    public Mail getMailAtSlot(int slot) {
+        int index = currentPage * ITEMS_PER_PAGE + slot;
+        List<Mail> mails = mailBox.getMails();
+        if (index >= 0 && index < mails.size()) {
+            return mails.get(index);
+        }
+        return null;
     }
 }

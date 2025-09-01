@@ -31,7 +31,7 @@ public class CommandManager implements CommandExecutor {
         BaseMessage byMessage = BaseMessage.getByMessage(subCommand);
 
         switch (byMessage) {
-            case COMMAND_OPEN -> commandModule.commandStart(sender, args);
+            case COMMAND_OPEN -> commandModule.commandOpen(sender, args);
             case COMMAND_RELOAD -> commandModule.commandReload(sender, args);
             default -> {
                 sender.sendMessage("§c[우체통] " + BaseMessage.ERROR_COMMAND.getMessage());

@@ -41,18 +41,30 @@ public class MailBoxGUIListener implements Listener {
         }
 
         int slot = event.getSlot();
+        Player player = (Player) event.getWhoClicked();
+        
+        // 이전 페이지 버튼 (slot 48)
+        if (slot == 48) {
+            gui.previousPage();
+            return;
+        }
+        
+        // 다음 페이지 버튼 (slot 50)
+        if (slot == 50) {
+            gui.nextPage();
+            return;
+        }
+        
+        // 일반 아이템 슬롯이 아닌 경우
         if (slot < 0 || slot >= 45) {
             return;
         }
 
-        Player player = (Player) event.getWhoClicked();
-        List<Mail> mails = gui.getMailBox().getMails();
-
-        if (slot >= mails.size()) {
+        Mail mail = gui.getMailAtSlot(slot);
+        if (mail == null) {
             return;
         }
 
-        Mail mail = mails.get(slot);
         ItemStack item = mail.item();
 
         if (player.getInventory().firstEmpty() == -1) {
@@ -60,7 +72,8 @@ public class MailBoxGUIListener implements Listener {
             return;
         }
 
-        gui.getMailBox().removeMail(slot);
+        int actualIndex = gui.getCurrentPage() * 45 + slot;
+        gui.getMailBox().removeMail(actualIndex);
         player.getInventory().addItem(item);
         
         mailBoxManager.saveMailBox(player.getUniqueId());

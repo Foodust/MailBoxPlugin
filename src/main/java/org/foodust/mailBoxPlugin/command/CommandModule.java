@@ -4,8 +4,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.foodust.mailBoxPlugin.MailBoxPlugin;
 
-import java.util.Arrays;
-
 public class CommandModule {
 
     private final MailBoxPlugin plugin;
@@ -14,7 +12,7 @@ public class CommandModule {
         this.plugin = plugin;
     }
 
-    public void commandStart(CommandSender sender, String[] data) {
+    public void commandOpen(CommandSender sender, String[] data) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage("§c[우체통] 이 명령어는 플레이어만 사용할 수 있습니다!");
             return;
