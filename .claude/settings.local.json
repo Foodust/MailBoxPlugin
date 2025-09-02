@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(dir gradle)",
+      "Bash(dir gradlewrapper)",
+      "Bash(dir:*)",
+      "Bash(gradle wrapper:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
